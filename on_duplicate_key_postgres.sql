@@ -16,11 +16,16 @@ START TRANSACTION;
       FROM temporary_table 
       WHERE test.id=temporary_table.id;
 
+  -- delete rows that are already copied
+  -- this is a positive index-lookup and therefore rather fast
+  DELETE
+    FROM temporary_table
+    WHERE (id) IN (SELECT id from test) AS a;
+
   -- insert anything really new
   INSERT INTO test
     SELECT *
-    FROM temporary_table
-    WHERE id NOT IN (SELECT id FROM test) AS a;
+    FROM temporary_table;
 COMMIT;
 
 
@@ -44,9 +49,14 @@ START TRANSACTION;
       FROM temporary_table 
       WHERE test.id=temporary_table.id;
 
+  -- delete rows that are already copied
+  -- this is a positive index-lookup and therefore rather fast
+  DELETE
+    FROM temporary_table
+    WHERE (id) IN (SELECT id from test) AS a;
+
   -- insert anything really new
   INSERT INTO test
     SELECT *
-    FROM temporary_table
-    WHERE id NOT IN (SELECT id FROM test) AS a;
+    FROM temporary_table;
 COMMIT;
